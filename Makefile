@@ -68,7 +68,7 @@ $(ATTRIBUTIONS_FILENAME): $(BIONOMIA_FILEPATH)
  	| gunzip\
 	| cut -f2,4\
 	| grep -v -P "^\t"\
-	| grep -v -P "\t$"\
+	| grep -v -P "\t$$"\
 	| grep -P "\t"\
 	| sed 's/\t/\tidentifiedBy\t/g'\
 	| gzip > $(ATTRIBUTIONS_FILEPATH)
@@ -77,7 +77,7 @@ $(ATTRIBUTIONS_FILENAME): $(BIONOMIA_FILEPATH)
 	| gunzip\
 	| cut -f2,4\
 	| grep -v -P "^\t"\
-	| grep -v -P "\t$"\
+	| grep -v -P "\t$$"\
 	| grep -P "\t"\
 	| sed 's/\t/\trecordedBy\t/g'\
 	| gzip >> $(ATTRIBUTIONS_FILEPATH)
