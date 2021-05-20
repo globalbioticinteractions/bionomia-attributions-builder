@@ -2,9 +2,9 @@ SHELL=/bin/bash
 BUILD_DIR=target#!/bin/bash
 
 BIONOMIA_ZENODO_DEPOSIT_ID=4764045
-BIONOMIA_FILENAME=f393f543-89fc-46e0-bdce-e294bbb97135.zip
+BIONOMIA_FILENAME=input/f393f543-89fc-46e0-bdce-e294bbb97135.zip
 
-ATTRIBUTIONS_FILENAME=attributions.tsv.gz
+ATTRIBUTIONS_FILENAME=dist/attributions.tsv.gz
 
 #
 # Transform Bionomia Attributions Archive into terse format.
@@ -14,15 +14,17 @@ ATTRIBUTIONS_FILENAME=attributions.tsv.gz
 #
 
 .PHONY: all clean
-
+w
 clean:
-	rm *.tsv.gz
-	rm $(BIONOMIA_FILENAME)
-	rm $(ATTRIBUTIONS_FILENAME)
+	rm -rf input/ dist/
 
 all: $(BIONOMIA_FILENAME) $(ATTRIBUTIONS_FILENAME)
 
-$(BIONOMIA_FILENAME):
+init:
+	mkdir -p input
+	mkdir -p dist
+
+$(BIONOMIA_FILENAME): init
 	curl "https://zenodo.org/record/$(BIONOMIA_ZENODO_DEPOSIT_ID)/files/$(BIONOMIA_FILENAME)"\
  	> $(BIONOMIA_FILENAME)
 	cat $(BIONOMIA_FILENAME)\
@@ -37,38 +39,38 @@ $(ATTRIBUTIONS_FILENAME): $(BIONOMIA_FILENAME)
 	unzip -p $(BIONOMIA_FILENAME) occurrences.csv \
 	 | mlr --icsv --otsv cut -f gbifID,occurrenceID\
 	 | gzip\
-	 > occurrences.tsv.gz
+	 > input/occurrences.tsv.gz
 
 	unzip -p $(BIONOMIA_FILENAME) attributions.csv\
 	 | mlr --icsv --otsv cut -f occurrence_id,identifiedBy\
 	 | mlr --itsv --otsv rename occurrence_id,gbifID\
 	 | gzip\
-	 > identified_by.tsv.gz
+	 > input/identified_by.tsv.gz
 
 	unzip -p $(BIONOMIA_FILENAME) attributions.csv\
 	 | mlr --icsv --otsv cut -f occurrence_id,recordedBy\
 	 | mlr --itsv --otsv rename occurrence_id,gbifID\
 	 | gzip\
-	 > recorded_by.tsv.gz
+	 > input/recorded_by.tsv.gz
 
 	paste  <(cat occurrences.tsv.gz | gunzip | tail -n+2 | sort) <(cat recorded_by.tsv.gz | gunzip | tail -n+2 | sort)\
  	| gzip\
- 	> occurrences_recorded_by.tsv.gz
+ 	> input/occurrences_recorded_by.tsv.gz
 
-	paste  <(zcat occurrences.tsv.gz | tail -n+2 | sort) <(zcat identified_by.tsv.gz | tail -n+2 | sort)\
+	paste  <(cat input/occurrences.tsv.gz | gunzip | tail -n+2 | sort) <(cat input/identified_by.tsv.gz | gunzip | tail -n+2 | sort)\
  	| gzip\
- 	> occurrences_identified_by.tsv.gz
+ 	> input/occurrences_identified_by.tsv.gz
 
-	cat occurrences_identified_by.tsv.gz\
+	cat input/occurrences_identified_by.tsv.gz\
  	 | gunzip\
 	 | cut -f2,4\
 	 | grep -v -P "^\t"\
 	 | grep -v -P "\t$"\
 	 | grep -P "\t"\
 	 | sed 's/\t/\tidentifiedBy\t/g'\
-	 | gzip > $(ATTRIBUTIONS_FILENAME) 
+	 | gzip > $(ATTRIBUTIONS_FILENAME)
 
-	cat occurrences_recorded_by.tsv.gz\
+	cat input/occurrences_recorded_by.tsv.gz\
 	 | gunzip\
 	 | cut -f2,4\
 	 | grep -v -P "^\t"\
