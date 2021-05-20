@@ -55,7 +55,7 @@ $(ATTRIBUTIONS_FILENAME): $(BIONOMIA_FILEPATH)
 	 | gzip\
 	 > input/recorded_by.tsv.gz
 
-	paste  <(cat occurrences.tsv.gz | gunzip | tail -n+2 | sort) <(cat recorded_by.tsv.gz | gunzip | tail -n+2 | sort)\
+	paste  <(cat input/occurrences.tsv.gz | gunzip | tail -n+2 | sort) <(cat input/recorded_by.tsv.gz | gunzip | tail -n+2 | sort)\
  	| gzip\
  	> input/occurrences_recorded_by.tsv.gz
 
