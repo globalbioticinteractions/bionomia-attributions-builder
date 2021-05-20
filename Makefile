@@ -15,13 +15,12 @@ ATTRIBUTIONS_SAMPLE_FILEPATH=dist/attributions-sample.tsv
 # David Shorthouse. (2021). Attributions made on Bionomia for Natural Science Collectors (Version v1) [Data set]. Zenodo. http://doi.org/10.5281/zenodo.4764045
 #
 
-.PHONY: all clean
+.PHONY: all clean init
 
-all: $(BIONOMIA_FILEPATH) $(ATTRIBUTIONS_FILEPATH) $(ATTRIBUTIONS_SAMPLE_FILEPATH)
+all: $(ATTRIBUTIONS_SAMPLE_FILEPATH)
 
 clean:
 	rm -rf input/ dist/
-
 
 init:
 	mkdir -p input
