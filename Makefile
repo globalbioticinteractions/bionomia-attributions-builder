@@ -3,6 +3,7 @@ BUILD_DIR=target#!/bin/bash
 
 BIONOMIA_ZENODO_DEPOSIT_ID=4764045
 BIONOMIA_FILENAME=input/f393f543-89fc-46e0-bdce-e294bbb97135.zip
+BIONOMIA_FILEPATH=input/f393f543-89fc-46e0-bdce-e294bbb97135.zip
 
 ATTRIBUTIONS_FILENAME=dist/attributions.tsv.gz
 
@@ -15,7 +16,7 @@ ATTRIBUTIONS_FILENAME=dist/attributions.tsv.gz
 
 .PHONY: all clean
 
-all: $(BIONOMIA_FILENAME) $(ATTRIBUTIONS_FILENAME)
+all: $(BIONOMIA_FILEPATH) $(ATTRIBUTIONS_FILENAME)
 
 clean:
 	rm -rf input/ dist/
@@ -25,30 +26,30 @@ init:
 	mkdir -p input
 	mkdir -p dist
 
-$(BIONOMIA_FILENAME): init
+$(BIONOMIA_FILEPATH): init
 	curl "https://zenodo.org/record/$(BIONOMIA_ZENODO_DEPOSIT_ID)/files/$(BIONOMIA_FILENAME)"\
- 	> $(BIONOMIA_FILENAME)
-	cat $(BIONOMIA_FILENAME)\
+ 	> $(BIONOMIA_FILEPATH)
+	cat $(BIONOMIA_FILEPATH)\
  	| sha256sum
 	# hash://sha256/6a04c1503ca305331d833b1c463ee09bb6054c3da29cd838b44bc8e86b4b7a7f
 
-	cat $(BIONOMIA_FILENAME)\
+	cat $(BIONOMIA_FILEPATH)\
  	| md5sum
 	# hash://md5/2680824ab3aa25f40d040506344ef869
 
-$(ATTRIBUTIONS_FILENAME): $(BIONOMIA_FILENAME)
-	unzip -p $(BIONOMIA_FILENAME) occurrences.csv \
+$(ATTRIBUTIONS_FILENAME): $(BIONOMIA_FILEPATH)
+	unzip -p $(BIONOMIA_FILEPATH) occurrences.csv \
 	 | mlr --icsv --otsv cut -f gbifID,occurrenceID\
 	 | gzip\
 	 > input/occurrences.tsv.gz
 
-	unzip -p $(BIONOMIA_FILENAME) attributions.csv\
+	unzip -p $(BIONOMIA_FILEPATH) attributions.csv\
 	 | mlr --icsv --otsv cut -f occurrence_id,identifiedBy\
 	 | mlr --itsv --otsv rename occurrence_id,gbifID\
 	 | gzip\
 	 > input/identified_by.tsv.gz
 
-	unzip -p $(BIONOMIA_FILENAME) attributions.csv\
+	unzip -p $(BIONOMIA_FILEPATH) attributions.csv\
 	 | mlr --icsv --otsv cut -f occurrence_id,recordedBy\
 	 | mlr --itsv --otsv rename occurrence_id,gbifID\
 	 | gzip\
