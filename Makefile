@@ -15,18 +15,15 @@ ATTRIBUTIONS_SAMPLE_FILEPATH=dist/attributions-sample.tsv
 # David Shorthouse. (2021). Attributions made on Bionomia for Natural Science Collectors (Version v1) [Data set]. Zenodo. http://doi.org/10.5281/zenodo.4764045
 #
 
-.PHONY: all clean init
+.PHONY: all clean
 
 all: $(ATTRIBUTIONS_SAMPLE_FILEPATH)
 
 clean:
 	rm -rf input/ dist/
 
-init:
+$(BIONOMIA_FILEPATH):
 	mkdir -p input
-	mkdir -p dist
-
-$(BIONOMIA_FILEPATH): init
 	curl "https://zenodo.org/record/$(BIONOMIA_ZENODO_DEPOSIT_ID)/files/$(BIONOMIA_FILENAME)"\
  	> $(BIONOMIA_FILEPATH)
 	cat $(BIONOMIA_FILEPATH)\
@@ -38,6 +35,7 @@ $(BIONOMIA_FILEPATH): init
 	# hash://md5/2680824ab3aa25f40d040506344ef869
 
 $(ATTRIBUTIONS_FILEPATH): $(BIONOMIA_FILEPATH)
+	mkdir -p dist input
 	unzip -p $(BIONOMIA_FILEPATH) occurrences.csv\
 	| mlr --icsv --otsv cut -f gbifID,occurrenceID\
 	| gzip\
