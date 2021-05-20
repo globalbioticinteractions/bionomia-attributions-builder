@@ -5,7 +5,8 @@ BIONOMIA_ZENODO_DEPOSIT_ID=4764045
 BIONOMIA_FILENAME=f393f543-89fc-46e0-bdce-e294bbb97135.zip
 BIONOMIA_FILEPATH=input/$(BIONOMIA_FILENAME)
 
-ATTRIBUTIONS_FILENAME=dist/attributions.tsv.gz
+ATTRIBUTIONS_FILEPATH=dist/attributions.tsv.gz
+ATTRIBUTIONS_SAMPLE_FILEPATH=dist/attributions-sample.tsv
 
 #
 # Transform Bionomia Attributions Archive into terse format.
@@ -16,7 +17,7 @@ ATTRIBUTIONS_FILENAME=dist/attributions.tsv.gz
 
 .PHONY: all clean
 
-all: $(BIONOMIA_FILEPATH) $(ATTRIBUTIONS_FILENAME)
+all: $(BIONOMIA_FILEPATH) $(ATTRIBUTIONS_FILEPATH) $(ATTRIBUTIONS_SAMPLE_FILEPATH)
 
 clean:
 	rm -rf input/ dist/
@@ -70,7 +71,7 @@ $(ATTRIBUTIONS_FILENAME): $(BIONOMIA_FILEPATH)
 	| grep -v -P "\t$"\
 	| grep -P "\t"\
 	| sed 's/\t/\tidentifiedBy\t/g'\
-	| gzip > $(ATTRIBUTIONS_FILENAME)
+	| gzip > $(ATTRIBUTIONS_FILEPATH)
 
 	cat input/occurrences_recorded_by.tsv.gz\
 	| gunzip\
@@ -79,5 +80,12 @@ $(ATTRIBUTIONS_FILENAME): $(BIONOMIA_FILEPATH)
 	| grep -v -P "\t$"\
 	| grep -P "\t"\
 	| sed 's/\t/\trecordedBy\t/g'\
-	| gzip >> $(ATTRIBUTIONS_FILENAME)
+	| gzip >> $(ATTRIBUTIONS_FILEPATH)
 
+$(ATTRIBUTIONS_SAMPLE_FILEPATH): $(ATTRIBUTIONS_FILEPATH)
+	cat $(ATTRIBUTIONS_FILEPATH)\
+	| gunzip\
+	| head -n10 >> $(ATTRIBUTIONS_SAMPLE_FILEPATH)
+	cat $(ATTRIBUTIONS_FILEPATH)\
+	| gunzip\
+	| tail -n10 >> $(ATTRIBUTIONS_SAMPLE_FILEPATH)
