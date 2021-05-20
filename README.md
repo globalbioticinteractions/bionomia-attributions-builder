@@ -47,5 +47,5 @@ where generated ```dist/``` directory includes:
 
  * attributions-sample.tsv:  the first and last 10 lines uncompressed lines from attributions.tsv.gz 
  * [file].sha256 [file].md5 files contain sha256 and md5 hex-encoded hashes of related files
- * bionomia.zip the bionomia archive used to generated the attributions.
+ * bionomia.zip was the bionomia archive used to generated the attributions.
 
