@@ -38,22 +38,22 @@ $(BIONOMIA_FILEPATH): init
 	# hash://md5/2680824ab3aa25f40d040506344ef869
 
 $(ATTRIBUTIONS_FILENAME): $(BIONOMIA_FILEPATH)
-	unzip -p $(BIONOMIA_FILEPATH) occurrences.csv \
-	 | mlr --icsv --otsv cut -f gbifID,occurrenceID\
-	 | gzip\
-	 > input/occurrences.tsv.gz
+	unzip -p $(BIONOMIA_FILEPATH) occurrences.csv\
+	| mlr --icsv --otsv cut -f gbifID,occurrenceID\
+	| gzip\
+	> input/occurrences.tsv.gz
 
 	unzip -p $(BIONOMIA_FILEPATH) attributions.csv\
-	 | mlr --icsv --otsv cut -f occurrence_id,identifiedBy\
-	 | mlr --itsv --otsv rename occurrence_id,gbifID\
-	 | gzip\
-	 > input/identified_by.tsv.gz
+	| mlr --icsv --otsv cut -f occurrence_id,identifiedBy\
+	| mlr --itsv --otsv rename occurrence_id,gbifID\
+	| gzip\
+	> input/identified_by.tsv.gz
 
 	unzip -p $(BIONOMIA_FILEPATH) attributions.csv\
-	 | mlr --icsv --otsv cut -f occurrence_id,recordedBy\
-	 | mlr --itsv --otsv rename occurrence_id,gbifID\
-	 | gzip\
-	 > input/recorded_by.tsv.gz
+	| mlr --icsv --otsv cut -f occurrence_id,recordedBy\
+	| mlr --itsv --otsv rename occurrence_id,gbifID\
+	| gzip\
+	> input/recorded_by.tsv.gz
 
 	paste  <(cat input/occurrences.tsv.gz | gunzip | tail -n+2 | sort) <(cat input/recorded_by.tsv.gz | gunzip | tail -n+2 | sort)\
  	| gzip\
@@ -64,20 +64,20 @@ $(ATTRIBUTIONS_FILENAME): $(BIONOMIA_FILEPATH)
  	> input/occurrences_identified_by.tsv.gz
 
 	cat input/occurrences_identified_by.tsv.gz\
- 	 | gunzip\
-	 | cut -f2,4\
-	 | grep -v -P "^\t"\
-	 | grep -v -P "\t$"\
-	 | grep -P "\t"\
-	 | sed 's/\t/\tidentifiedBy\t/g'\
-	 | gzip > $(ATTRIBUTIONS_FILENAME)
+ 	| gunzip\
+	| cut -f2,4\
+	| grep -v -P "^\t"\
+	| grep -v -P "\t$"\
+	| grep -P "\t"\
+	| sed 's/\t/\tidentifiedBy\t/g'\
+	| gzip > $(ATTRIBUTIONS_FILENAME)
 
 	cat input/occurrences_recorded_by.tsv.gz\
-	 | gunzip\
-	 | cut -f2,4\
-	 | grep -v -P "^\t"\
-	 | grep -v -P "\t$"\
-	 | grep -P "\t"\
-	 | sed 's/\t/\trecordedBy\t/g'\
-	 | gzip >> $(ATTRIBUTIONS_FILENAME)
+	| gunzip\
+	| cut -f2,4\
+	| grep -v -P "^\t"\
+	| grep -v -P "\t$"\
+	| grep -P "\t"\
+	| sed 's/\t/\trecordedBy\t/g'\
+	| gzip >> $(ATTRIBUTIONS_FILENAME)
 
