@@ -1,2 +1,4 @@
 *.zip
 *.tsv.gz
+dist/
+input/

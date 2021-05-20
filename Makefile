@@ -3,7 +3,7 @@ BUILD_DIR=target#!/bin/bash
 
 BIONOMIA_ZENODO_DEPOSIT_ID=4764045
 BIONOMIA_FILENAME=f393f543-89fc-46e0-bdce-e294bbb97135.zip
-BIONOMIA_FILEPATH=input/$(BIONOMIA_FILENAME)
+BIONOMIA_FILEPATH=dist/bionomia.zip
 
 ATTRIBUTIONS_FILEPATH=dist/attributions.tsv.gz
 ATTRIBUTIONS_SAMPLE_FILEPATH=dist/attributions-sample.tsv
@@ -27,11 +27,13 @@ $(BIONOMIA_FILEPATH):
 	curl "https://zenodo.org/record/$(BIONOMIA_ZENODO_DEPOSIT_ID)/files/$(BIONOMIA_FILENAME)"\
  	> $(BIONOMIA_FILEPATH)
 	cat $(BIONOMIA_FILEPATH)\
- 	| sha256sum
+ 	| sha256sum\
+	| cut -d ' ' -f1 > $(BIONOMIA_FILEPATH).sha256
 	# hash://sha256/6a04c1503ca305331d833b1c463ee09bb6054c3da29cd838b44bc8e86b4b7a7f
 
 	cat $(BIONOMIA_FILEPATH)\
- 	| md5sum
+ 	| md5sum\
+	| cut -d ' ' -f1 > $(BIONOMIA_FILEPATH).md5
 	# hash://md5/2680824ab3aa25f40d040506344ef869
 
 $(ATTRIBUTIONS_FILEPATH): $(BIONOMIA_FILEPATH)
@@ -79,10 +81,20 @@ $(ATTRIBUTIONS_FILEPATH): $(BIONOMIA_FILEPATH)
 	| sed 's/\t/\trecordedBy\t/g'\
 	| gzip >> $(ATTRIBUTIONS_FILEPATH)
 
+	cat $(ATTRIBUTIONS_FILEPATH)\
+	| gunzip\
+	| sha256sum\
+	| cut -d ' ' -f1 > dist/attributions.tsv.sha256
+
+	cat $(ATTRIBUTIONS_FILEPATH)\
+	| gunzip\
+	| md5sum\
+	| cut -d ' ' -f1 > dist/attributions.tsv.md5
+
 $(ATTRIBUTIONS_SAMPLE_FILEPATH): $(ATTRIBUTIONS_FILEPATH)
 	cat $(ATTRIBUTIONS_FILEPATH)\
 	| gunzip\
-	| head -n10 >> $(ATTRIBUTIONS_SAMPLE_FILEPATH)
+	| head -n10 > $(ATTRIBUTIONS_SAMPLE_FILEPATH)
 	cat $(ATTRIBUTIONS_FILEPATH)\
 	| gunzip\
 	| tail -n10 >> $(ATTRIBUTIONS_SAMPLE_FILEPATH)
