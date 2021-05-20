@@ -21,7 +21,7 @@ NRM:NRM-Fish:16167	identifiedBy	http://www.wikidata.org/entity/Q446239
 # Requirements
 
  * [make](https://en.wikipedia.org/wiki/Make_(software)) 
- * [bash](https://en.wikipedia.org/wiki/Bash_(Unix_shell)
+ * [bash](https://en.wikipedia.org/wiki/Bash_(Unix_shell))
  * [mlr](https://github.com/johnkerl/miller)
  * sha256sum / md5sum 
  * internet connection
