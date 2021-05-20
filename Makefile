@@ -38,7 +38,7 @@ $(BIONOMIA_FILEPATH): init
  	| md5sum
 	# hash://md5/2680824ab3aa25f40d040506344ef869
 
-$(ATTRIBUTIONS_FILENAME): $(BIONOMIA_FILEPATH)
+$(ATTRIBUTIONS_FILEPATH): $(BIONOMIA_FILEPATH)
 	unzip -p $(BIONOMIA_FILEPATH) occurrences.csv\
 	| mlr --icsv --otsv cut -f gbifID,occurrenceID\
 	| gzip\
