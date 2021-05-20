@@ -15,10 +15,11 @@ ATTRIBUTIONS_FILENAME=dist/attributions.tsv.gz
 
 .PHONY: all clean
 
+all: $(BIONOMIA_FILENAME) $(ATTRIBUTIONS_FILENAME)
+
 clean:
 	rm -rf input/ dist/
 
-all: $(BIONOMIA_FILENAME) $(ATTRIBUTIONS_FILENAME)
 
 init:
 	mkdir -p input
