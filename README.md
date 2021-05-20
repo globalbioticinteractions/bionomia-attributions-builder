@@ -29,8 +29,10 @@ NRM:NRM-Fish:16167	identifiedBy	http://www.wikidata.org/entity/Q446239
 # Usage
 ```shell
 $ make
-# downloads  
-
+# downloads archive
+...
+# generate terse attributions.tsv.gz and related files
+...
 $ ls -1 dist
 attributions-sample.tsv
 attributions.tsv.gz
@@ -43,7 +45,7 @@ bionomia.zip
 
 where generated ```dist/``` directory includes:
 
- * dist/attributions-sample.tsv:  the first and last 10 lines uncompressed lines from attributions.tsv.gz 
+ * attributions-sample.tsv:  the first and last 10 lines uncompressed lines from attributions.tsv.gz 
  * [file].sha256 [file].md5 files contain sha256 and md5 hex-encoded hashes of related files
  * bionomia.zip the bionomia archive used to generated the attributions.
 
