@@ -14,7 +14,7 @@ ATTRIBUTIONS_FILENAME=dist/attributions.tsv.gz
 #
 
 .PHONY: all clean
-w
+
 clean:
 	rm -rf input/ dist/
 
