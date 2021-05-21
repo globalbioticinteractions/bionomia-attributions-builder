@@ -29,7 +29,7 @@ clean:
 	rm -rf input/ dist/
 
 $(BIONOMIA_FILEPATH):
-	mkdir -p input
+	mkdir -p dist input
 	curl "$(BIONOMIA_ARCHIVE)"\
  	> $(BIONOMIA_FILEPATH)
 	cat $(BIONOMIA_FILEPATH)\
