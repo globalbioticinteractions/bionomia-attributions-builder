@@ -27,12 +27,15 @@ NRM:NRM-Fish:16167	identifiedBy	http://www.wikidata.org/entity/Q446239
  * internet connection
 
 # Usage
+The generate an attributions.tsv.gz and associated digital artifacts, run:
+
 ```shell
-$ make
-# downloads archive
-...
-# generate terse attributions.tsv.gz and related files
-...
+$ make BIONOMIA_ZENODO_DEPOSIT_ID=[some other zenodo deposit id]
+```
+
+where BIONOMIA_ZENODO_DEPOSIT_ID is set to the deposit id of the Bionomia archive (e.g., 4764045 for deposit at http://doi.org/10.5281/zenodo.4764045).
+
+
 $ ls -1 dist
 attributions-sample.tsv
 attributions.tsv.gz
@@ -49,3 +52,16 @@ where generated ```dist/``` directory includes:
  * [file].sha256 [file].md5 files contain sha256 and md5 hex-encoded hashes of related files
  * bionomia.zip was the bionomia archive used to generated the attributions.
 
+# Provenance
+
+To generate a machine-readable location-agonistic provenance, run:
+
+```
+$ make prov ATTRIBUTIONS_ZENODO_DEPOSIT_ID=[some zenodo deposit id] BIONOMIA_ZENODO_DEPOSIT_ID=[some other zenodo deposit id]
+```
+
+where [some zenodo deposit id] is the location of the Zenodo publication/deposit that contains the generated attributions.tsv.gz derived from the specified BIONOMIA_ZENODO_DEPOSIT_ID . Example of a such attributions.tsv.gz zenodo deposit id id 4777336 can be found at:
+
+Poelen, Jorrit H. (2021). attributions.tsv.gz: a Terse Biodiversity Data Attributions Dataset derived from Bionomia (Version 0.0.2) [Data set]. Zenodo. http://doi.org/10.5281/zenodo.4777336
+
+Note that this publication is enriched with the machine-readable location-agnostic content-based provenance compatible with [Preston](https://preston.guoda.bio) biodiversity dataset tracker. 
