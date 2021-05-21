@@ -8,6 +8,7 @@ BIONOMIA_FILEPATH=dist/bionomia.zip
 
 ATTRIBUTIONS_FILEPATH=dist/attributions.tsv.gz
 ATTRIBUTIONS_SAMPLE_FILEPATH=dist/attributions-sample.tsv
+ATTRIBUTIONS_ZENODO_DEPOSIT_ID=[replace me] # use [make prov ATTRIBUTIONS_ZENODO_DEPOSIT_ID=[some zenodo deposit id]
 
 PRESTON_VERSION=0.2.6
 PRESTON_JAR=input/preston.jar
@@ -109,11 +110,11 @@ $(PRESTON_JAR):
 	> $(PRESTON_JAR)
 
 prov: $(PRESTON_JAR)
-	$(PRESTON) track "https://zenodo.org/record/$(ATTRIBUTIONS_ZENODO_DEPOSIT_ID)/files/bionomia.zip" "https://zenodo.org/record/$(ATTRIBUTIONS_ZENODO_DEPOSIT_ID)/files/attributions.tsv.gz"\
+	$(PRESTON) track "$(BIONOMIA_ARCHIVE)" "https://zenodo.org/record/$(ATTRIBUTIONS_ZENODO_DEPOSIT_ID)/files/attributions.tsv.gz"\
 	> input/prov.nq
 	cat input/prov.nq\
 	| grep hasVersion\
-	| cut -f3\
+	| cut -d ' ' -f3\
 	| tr '\n' ' '\
 	| awk '{ print "<" $$2 "> <http://www.w3.org/ns/prov#wasDerivedFrom> <" $$1 "> ."  }'\
 	| $(PRESTON) append
