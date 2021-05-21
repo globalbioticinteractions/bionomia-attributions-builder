@@ -116,7 +116,7 @@ prov: $(PRESTON_JAR)
 	| grep hasVersion\
 	| cut -d ' ' -f3\
 	| tr '\n' ' '\
-	| awk '{ print "<" $$2 "> <http://www.w3.org/ns/prov#wasDerivedFrom> <" $$1 "> ."  }'\
+	| awk '{ print $$2 " <http://www.w3.org/ns/prov#wasDerivedFrom> " $$1 " ."  }'\
 	| $(PRESTON) append
 	# copy content, provenance, and provenance logs to a flat file structure
 	mkdir -p dist
