@@ -106,6 +106,7 @@ $(ATTRIBUTIONS_SAMPLE_FILEPATH): $(ATTRIBUTIONS_FILEPATH)
 	| tail -n10 >> $(ATTRIBUTIONS_SAMPLE_FILEPATH)
 
 $(PRESTON_JAR):
+	mkdir -p input
 	curl -L "https://github.com/bio-guoda/preston/releases/download/$(PRESTON_VERSION)/preston.jar"\
 	> $(PRESTON_JAR)
 
