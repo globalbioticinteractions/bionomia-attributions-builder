@@ -3,11 +3,15 @@ BUILD_DIR=target#!/bin/bash
 
 BIONOMIA_FILENAME=f393f543-89fc-46e0-bdce-e294bbb97135.zip
 BIONOMIA_ZENODO_DEPOSIT_ID=4764045
-BIONOMIA_ARCHIVE="https://zenodo.org/record/$(BIONOMIA_ZENODO_DEPOSIT_ID)/files/$(BIONOMIA_FILENAME)"
+BIONOMIA_ARCHIVE=https://zenodo.org/record/$(BIONOMIA_ZENODO_DEPOSIT_ID)/files/$(BIONOMIA_FILENAME)
 BIONOMIA_FILEPATH=dist/bionomia.zip
 
 ATTRIBUTIONS_FILEPATH=dist/attributions.tsv.gz
 ATTRIBUTIONS_SAMPLE_FILEPATH=dist/attributions-sample.tsv
+
+PRESTON_VERSION=0.2.6
+PRESTON_JAR=input/preston.jar
+PRESTON=java -jar $(PRESTON_JAR)
 
 #
 # Transform Bionomia Attributions Archive into terse format.
@@ -100,16 +104,19 @@ $(ATTRIBUTIONS_SAMPLE_FILEPATH): $(ATTRIBUTIONS_FILEPATH)
 	| gunzip\
 	| tail -n10 >> $(ATTRIBUTIONS_SAMPLE_FILEPATH)
 
-prov:
-	preston track "https://zenodo.org/record/$(ATTRIBUTIONS_ZENODO_DEPOSIT_ID)/files/bionomia.zip" "https://zenodo.org/record/$(ATTRIBUTIONS_ZENODO_DEPOSIT_ID)/files/attributions.tsv.gz"\
+$(PRESTON_JAR):
+	curl -L "https://github.com/bio-guoda/preston/releases/download/$(PRESTON_VERSION)/preston.jar"\
+	> $(PRESTON_JAR)
+
+prov: $(PRESTON_JAR)
+	$(PRESTON) track "https://zenodo.org/record/$(ATTRIBUTIONS_ZENODO_DEPOSIT_ID)/files/bionomia.zip" "https://zenodo.org/record/$(ATTRIBUTIONS_ZENODO_DEPOSIT_ID)/files/attributions.tsv.gz"\
 	> input/prov.nq
 	cat input/prov.nq\
 	| grep hasVersion\
 	| cut -f3\
 	| tr '\n' ' '\
 	| awk '{ print "<" $$2 "> <http://www.w3.org/ns/prov#wasDerivedFrom> <" $$1 "> ."  }'\
-	| preston process
+	| $(PRESTON) append
 	# copy content, provenance, and provenance logs to a flat file structure
 	mkdir -p dist
-	preston cp -p directoryDepth0 dist
-
+	$(PRESTON) cp -p directoryDepth0 dist
