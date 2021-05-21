@@ -1,8 +1,9 @@
 SHELL=/bin/bash
 BUILD_DIR=target#!/bin/bash
 
-BIONOMIA_ZENODO_DEPOSIT_ID=4764045
 BIONOMIA_FILENAME=f393f543-89fc-46e0-bdce-e294bbb97135.zip
+BIONOMIA_ZENODO_DEPOSIT_ID=4764045
+BIONOMIA_ARCHIVE="https://zenodo.org/record/$(BIONOMIA_ZENODO_DEPOSIT_ID)/files/$(BIONOMIA_FILENAME)"
 BIONOMIA_FILEPATH=dist/bionomia.zip
 
 ATTRIBUTIONS_FILEPATH=dist/attributions.tsv.gz
@@ -15,7 +16,7 @@ ATTRIBUTIONS_SAMPLE_FILEPATH=dist/attributions-sample.tsv
 # David Shorthouse. (2021). Attributions made on Bionomia for Natural Science Collectors (Version v1) [Data set]. Zenodo. http://doi.org/10.5281/zenodo.4764045
 #
 
-.PHONY: all clean
+.PHONY: all clean prov
 
 all: $(ATTRIBUTIONS_SAMPLE_FILEPATH)
 
@@ -24,7 +25,7 @@ clean:
 
 $(BIONOMIA_FILEPATH):
 	mkdir -p input
-	curl "https://zenodo.org/record/$(BIONOMIA_ZENODO_DEPOSIT_ID)/files/$(BIONOMIA_FILENAME)"\
+	curl "$(BIONOMIA_ARCHIVE)"\
  	> $(BIONOMIA_FILEPATH)
 	cat $(BIONOMIA_FILEPATH)\
  	| sha256sum\
@@ -98,3 +99,17 @@ $(ATTRIBUTIONS_SAMPLE_FILEPATH): $(ATTRIBUTIONS_FILEPATH)
 	cat $(ATTRIBUTIONS_FILEPATH)\
 	| gunzip\
 	| tail -n10 >> $(ATTRIBUTIONS_SAMPLE_FILEPATH)
+
+prov:
+	preston track "https://zenodo.org/record/$(ATTRIBUTIONS_ZENODO_DEPOSIT_ID)/files/bionomia.zip" "https://zenodo.org/record/$(ATTRIBUTIONS_ZENODO_DEPOSIT_ID)/files/attributions.tsv.gz"\
+	> input/prov.nq
+	cat input/prov.nq\
+	| grep hasVersion\
+	| cut -f3\
+	| tr '\n' ' '\
+	| awk '{ print "<" $$2 "> <http://www.w3.org/ns/prov#wasDerivedFrom> <" $$1 "> ."  }'\
+	| preston process
+	# copy content, provenance, and provenance logs to a flat file structure
+	mkdir -p dist
+	preston cp -p directoryDepth0 dist
+
